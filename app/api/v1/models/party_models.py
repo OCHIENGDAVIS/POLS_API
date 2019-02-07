@@ -20,7 +20,6 @@ class Party:
             'name': name,
             'hqAddress': hqadress,
             'logoUrl': logourl
-
         }
         parties.append(new_party)
         return new_party

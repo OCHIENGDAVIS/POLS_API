@@ -9,8 +9,19 @@ api = Blueprint('api', __name__)
 
 @api.route('/parties', methods=['GET'])
 def get_all_parties():
-    all_parties = Party.get_all_parties()
-    return jsonify(all_parties), 200
+    data = []
+    for party in parties:
+        temp_party = {
+            # "id": party["id"],
+            "name": party["name"],
+            "hqAddress": party["hqAddress"],
+            "logoUrl": party["logoUrl"]
+        }
+        data.append(temp_party)
+    return jsonify({
+        "status": 200,
+        "data": data
+    }), 200
 
 
 @api.route('/parties', methods=['POST'])
