@@ -5,5 +5,5 @@ from instance import config
 
 
 
-app = create_app(config.DevelopmentConfig)
+app = create_app(config.ProductionConfig)
 app.run(debug=True)
