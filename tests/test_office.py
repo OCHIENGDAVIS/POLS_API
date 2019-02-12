@@ -24,4 +24,4 @@ class TestOffice(BaseTest):
                    content_type="application/json")
             self.assertEqual(response.status_code, 400)
             response_msg = json.loads(response.data.decode("UTF-8"))
-            self.assertEqual(response_msg["message"], "Office with that ID already exists")
+            self.assertEqual(response_msg["message"], "Office with that id already exists")

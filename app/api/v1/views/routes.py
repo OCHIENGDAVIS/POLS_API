@@ -55,11 +55,6 @@ def create_a_party():
 
 @api.route('/parties/<int:party_id>', methods=['GET'])
 def get_a_party(party_id):
-    if not isinstance(party_id, int):
-        return jsonify({"message": "id must be an integer"}), 400
-    elif party_id < 0:
-        return jsonify({"message": "Id can not be a negative"}), 400
-    else:
         for party in parties:
             if party['id'] == party_id:
                 return jsonify(party), 200
@@ -68,11 +63,6 @@ def get_a_party(party_id):
 
 @api.route('/parties/<int:party_id>', methods=['DELETE'])
 def delete_a_party(party_id):
-    if not isinstance(party_id, int):
-        return jsonify({"message": "ID must be an integer"}), 400
-    elif party_id < 0:
-        return jsonify({"message": "ID must not be a negative integer"}), 400
-    else:
         for party in parties:
             if party['id'] == party_id:
                 party_index = parties.index(party)
@@ -97,9 +87,7 @@ def delete_a_party(party_id):
 def edit_a_party(party_id):
     data = request.get_json()
     name = data.get("name", None)
-    if not isinstance(party_id, int):
-        return jsonify({"message": "ID must be an integer"}), 400
-    elif name is None:
+    if name is None:
         return jsonify({'message': 'You must provide the new  name'}), 400
     elif len(data['name']) < 0:
         return jsonify({"message": "name cannot be empty"})
@@ -137,20 +125,18 @@ def get_all_offices():
 
 @api.route('/offices', methods=['POST'])
 def create_an_office():
-    data = request.get_json()
-    office_id = data.get("id", None)
-    office_type = data.get("type", None)
-    office_name = data.get("name")
-    if office_id is None:
-        return jsonify({"message": "Id is required"}), 400
-    elif office_type is None:
-        return jsonify({"message": "Type required"}), 400
-    elif office_name is None:
-        return jsonify({"message": "Name is required "}), 400
-    elif find_item_by_id(office_id, offices):
-        return jsonify({"message": "Office with that ID already exists"}), 400
-    else:
-        new_office = Office.create_office(office_id, office_type, office_name)
+    data = request.get_json(force=True)
+    allowed_fields = {
+        "id": int,
+        "name": str,
+        "type": str,
+    }
+    keys_validation_response = validate_keys(data, allowed_fields)
+    valuetypes_validation_response = validate_keys(data, allowed_fields)
+    if next(filter(lambda x: x['id'] == data['id'], offices), None):
+        return jsonify({"message": "Office with that id already exists", "code": 400}), 400
+    if keys_validation_response and valuetypes_validation_response:
+        new_office = Office.create_office(data['id'], data['type'], data['name'])
         return jsonify({
             "status": 201,
             "data": [{
@@ -163,17 +149,6 @@ def create_an_office():
 
 @api.route('/offices/<int:office_id>', methods=['GET'])
 def get_an_office(office_id):
-    if not isinstance(office_id, int):
-        return jsonify({
-            "status": 400,
-            "message": "the id must be an integer"
-        }), 400
-    elif office_id < 0:
-        return jsonify({
-            "status": 400,
-            "message": "ID must be an positive integer"
-        })
-    else:
         for office in offices:
             if office["id"] == office_id:
                 return jsonify({

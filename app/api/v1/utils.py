@@ -74,13 +74,4 @@ def find_item_by_id(item_id, item_iterable):
         return True
     else:
         return False
-
-def name_is_none(data):
-    if data.get("name") is None:
-         raise DataError
-    return False
-
-def id_is_none(data):
-    if data.get("id") is None:
-        raise DataError
     
