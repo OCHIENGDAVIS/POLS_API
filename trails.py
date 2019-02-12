@@ -10,11 +10,16 @@ allowed_fields = {
     "id": int,
     "type":str
 }
+    
+def verify_argument(data, fields):
+    if not data and not fields:
+        return False
+    return True
+
 
 def validate_keys(data, fields):
-    if not data:
-        return False
-    if not fields:
+    return_value = verify_argument(data, fields)
+    if return_value is False:
         return False
     for key, _ in fields.items():
         if  data.get(key) is None and not key in list(data.keys()) :
@@ -22,9 +27,8 @@ def validate_keys(data, fields):
     return True
 
 def validate_value_types(data, fields):
-    if  not data:
-        return False
-    if not fields:
+    return_value = verify_argument(data, fields)
+    if return_value is False:
         return False
     for key, value in data.items():
         if type(value) == fields.get(key):
