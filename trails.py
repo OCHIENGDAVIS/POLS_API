@@ -1,0 +1,36 @@
+data = {
+    "name": "NASA",
+    "type": "County government",
+    "id": "1",
+    "email": "blasadsda"
+}
+
+allowed_fields = {
+    "name": str,
+    "id": int,
+    "type":str
+}
+
+def validate_keys(data, fields):
+    if not data:
+        return False
+    if not fields:
+        return False
+    for key, _ in fields.items():
+        if  data.get(key) is None and not key in list(data.keys()) :
+            return False
+    return True
+
+def validate_value_types(data, fields):
+    if  not data:
+        return False
+    if not fields:
+        return False
+    for key, value in data.items():
+        if type(value) == fields.get(key):
+            return True
+    return False
+
+print(validate_keys(data, allowed_fields))
+print(validate_value_types(data, allowed_fields))
+

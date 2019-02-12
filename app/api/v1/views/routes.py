@@ -2,7 +2,7 @@ from flask import jsonify, request
 from flask import Blueprint
 from app.api.v1.models.party_models import Party, parties
 from app.api.v1.models.office_models import Office, offices
-from app.api.v1.utils import validate_party_info, find_item_by_id
+from app.api.v1.utils import find_item_by_id, validate_keys, validate_value_types
 
 api = Blueprint('api', __name__)
 
@@ -26,9 +26,18 @@ def get_all_parties():
 
 @api.route('/parties', methods=['POST'])
 def create_a_party():
-    data = request.get_json()
-    validation_response = validate_party_info(data)
-    if validation_response is None:
+    data = request.get_json(force=True)
+    allowed_fields = {
+        "id": int,
+        "name": str,
+        "hqAddress": str,
+        "logoUrl": str
+    }
+    keys_validation_response = validate_keys(data,allowed_fields )
+    valuetypes_validation_response = validate_keys(data, allowed_fields)
+    if next(filter(lambda x: x['id'] == data['id'], parties), None):
+        return jsonify({"message": "party with that id already exists", "code": 400}),400
+    elif keys_validation_response and valuetypes_validation_response:
         new_party = Party.create_party(
             data['id'], data['name'], data['hqAddress'], data['logoUrl'])
         return jsonify({
@@ -41,7 +50,7 @@ def create_a_party():
             ]
         }), 201
     else:
-        return jsonify({"message": validation_response['message']}), validation_response['code']
+        return jsonify({"message": "Data input error please check the data you are trying to submit"}), 400
 
 
 @api.route('/parties/<int:party_id>', methods=['GET'])
